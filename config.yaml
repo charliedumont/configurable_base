@@ -1,0 +1,33 @@
+main:
+    jwt_secret: '1secretthing'
+users:
+    user_types:
+        - dm
+        - ms
+    signup_args:
+        - email
+        - firstname
+        - lastname
+        - password
+        - userType
+    key_arg: email
+    testing:
+        testers:
+            - email: dm1@ce.pbi
+              firstname: dave
+              lastname: matter
+              password: pass
+              userType: dm
+            - email: dm2@ce.pbi
+              firstname: dave
+              lastname: matter
+              password: pass
+              userType: dm
+        keys_to_remove: 
+            - firstname
+            - lastname
+            - email
+
+
+
+

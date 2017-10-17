@@ -1,0 +1,13 @@
+*.pyc
+*.pyo
+index.yaml
+node_modules/
+static/bower_components/
+bower_components/
+tmp_store/
+lib/
+
+# Mac-specific attributes
+**/.DS_Store
+
+

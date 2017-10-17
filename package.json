@@ -1,0 +1,31 @@
+{
+  "name": "lib-fake-time-test",
+  "version": "0.1.0",
+  "main": "Gruntfile.js",
+  "dependencies": {
+      "grunt": "^0.4.5",
+      "grunt-bower-concat": "^1.0.0",
+      "grunt-karma": "^0.12.1",
+      "grunt-ng-annotate": "^2.0.2"
+  },
+  "devDependencies": {
+      "bower": "^1.7.7",
+      "grunt": "~0.4.5",
+      "grunt-contrib-jshint": "~0.10.0",
+      "grunt-contrib-nodeunit": "~0.4.1",
+      "grunt-contrib-uglify": "~0.5.0",
+      "grunt-contrib-concat": "~0.5.0",
+      "grunt-contrib-watch": "~0.6.1",
+      "grunt-wiredep": "^2.0.0",
+      "jasmine-core": "^2.4.1",
+      "karma": "^0.13.22",
+      "karma-chrome-launcher": "^0.2.3",
+      "karma-firefox-launcher": "^0.1.7",
+      "karma-jasmine": "^0.3.8"
+  },
+  "scripts": {
+      "prestart": "npm install",
+      "start": "dev_appserver.py --port=19080 --admin_port=19010 --storage_path=tmp_store app.yaml"
+  }
+}
+
