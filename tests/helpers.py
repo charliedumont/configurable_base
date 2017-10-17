@@ -41,7 +41,7 @@ class UserHelpers(object):
         user_list = self.config['testers']
         tmp = {}
         for user in user_list:
-            u = uc.create(user)
+            u = uc.create_by_args(user)
             tmp[u.key.urlsafe()] = u
             self.user_list.append(u)
         return tmp

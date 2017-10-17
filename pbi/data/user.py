@@ -15,7 +15,7 @@ class UserCreator(object):
         self.signup_args = Config.get('users', 'signup_args')
         self.prime_key =  Config.get('users', 'key_arg')
 
-    def verify(self, params):
+    def verify_args(self, params):
         for key in self.signup_args:
             if key not in params.keys():
                 details = "we don't have %s key" % key
@@ -34,11 +34,12 @@ class UserCreator(object):
             logging.info(details)
         return True
 
-    def create(self, params):
+    def create_by_args(self, params):
         signup_args = {}
         for ar in self.signup_args:
             signup_args[ar] = params.get(ar)
 
+        # we don't use password, we use the magic raw_password
         del(signup_args['password'])
         signup_args['password_raw'] = params.get('password')
         prime_key = params[self.prime_key].lower()

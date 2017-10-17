@@ -23,8 +23,8 @@ class SignUp(BaseRequestHandler):
         params = self.req_params
         try:
             creator = UserCreator(self.user_model)
-            creator.verify(params)
-            creator.create(params)
+            creator.verify_args(params)
+            creator.create_by_args(params)
         except CustomException, e:
             logging.info("aborting signup with 400, user id is duplicate")
             e.respond(status=400, response=self.response)
@@ -42,7 +42,6 @@ class Login(BaseRequestHandler):
     @set_options
     def post(self):
         params = self.req_params
-        logging.info(params)
         prime_key =  Config.get('users', 'key_arg')
         if prime_key in params.keys():
             email = params[prime_key].lower()
@@ -62,11 +61,7 @@ class Login(BaseRequestHandler):
         except CustomException as e:
             details = str(e)
             logging.info("Custom exception: " + details)
-            e.respond(self.response, status='401')
-            """
-            error_msg = ErrorReturn(self.response, error_code='', details=details)
-            error_msg.handle_401()
-            """
+            e.respond(response=self.response, status='401')
             return
         self.response.write(json.encode(json_dict))
 

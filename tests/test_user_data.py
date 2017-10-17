@@ -16,12 +16,12 @@ class TestUserCreator(Helpers):
         user_list = uh.config['testers']
         keys_to_remove = uh.config['keys_to_remove']
         for user in user_list:
-            self.assertTrue(uc.verify(user))
+            self.assertTrue(uc.verify_args(user))
             for ktr in keys_to_remove:
                 err_msg = "we don't have {0} key".format(ktr)
                 tmp_value = user.pop(ktr)
                 with self.assertRaises(CustomException) as cm:
-                    uc.verify(user)
+                    uc.verify_args(user)
                 ce = cm.exception
                 self.assertEqual(ce.details, err_msg)
                 user[ktr] = tmp_value
@@ -33,11 +33,11 @@ class TestUserCreator(Helpers):
         user_list = uh.config['testers']
         keys_to_check = uh.config['keys_to_remove']
         for user in user_list:
-            u = uc.create(user)
+            u = uc.create_by_args(user)
             for ktc in keys_to_check:
                 self.assertEqual(user[ktc], getattr(u, ktc))
             with self.assertRaises(CustomException) as cm:
-                u = uc.create(user)
+                u = uc.create_by_args(user)
             ce = cm.exception
             err_msg = "Duplicate user id"
             self.assertEqual(ce.details, err_msg)
@@ -72,7 +72,7 @@ class TestUserHelper(Helpers):
         user_list = uh.config['testers']
         keys_to_check = uh.config['keys_to_remove']
         for user in user_list:
-            u = uc.create(user)
+            u = uc.create_by_args(user)
             ud = uf.user_to_dict(u)
             for ktc in keys_to_check:
                 self.assertEqual(ud[ktc], getattr(u, ktc))
