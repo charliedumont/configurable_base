@@ -1,7 +1,7 @@
+"""This Module is the interface of user login and signup api """
 import logging
 from pprint import PrettyPrinter
 
-from google.appengine.ext import ndb
 from webapp2_extras import json
 
 from pbi.config import Config
@@ -14,6 +14,7 @@ from pbi.util import set_cors_headers
 
 
 class SignUp(BaseRequestHandler):
+    """ Api interface handler for signup """
 
     def options(self):
         set_cors_headers(self.response.headers)
@@ -25,7 +26,7 @@ class SignUp(BaseRequestHandler):
             creator = UserCreator(self.user_model)
             creator.verify_args(params)
             creator.create_by_args(params)
-        except CustomException, e:
+        except CustomException as e:
             logging.info("aborting signup with 400, user id is duplicate")
             e.respond(status=400, response=self.response)
             return
@@ -42,22 +43,22 @@ class Login(BaseRequestHandler):
     @set_options
     def post(self):
         params = self.req_params
-        prime_key =  Config.get('users', 'key_arg')
+        prime_key = Config.get('users', 'key_arg')
         if prime_key in params.keys():
             email = params[prime_key].lower()
         else:
-            details='no {0} provided'.format(prime_key)
-            error_msg = ErrorReturn( self.response,
-                error_code='', details=details)
+            details = 'no {0} provided'.format(prime_key)
+            error_msg = ErrorReturn(self.response,
+                                    error_code='', details=details)
             error_msg.handle_400()
             return
         password = params['password']
-        json_dict = { "success": "1" }
+        json_dict = {"success": "1"}
         try:
             uv = UserValidator(self.auth)
-            user = uv._check_login(email, password)
+            user = uv.check_login(email, password)
             token = pbi.token.generate(user)
-            json_dict["jwt"]  = token
+            json_dict["jwt"] = token
         except CustomException as e:
             details = str(e)
             logging.info("Custom exception: " + details)

@@ -5,7 +5,7 @@ from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 
 from models import User
 from pbi.config import Config
-from pbi.errors import CustomException, ErrorReturn
+from pbi.errors import CustomException
 
 
 class UserCreator(object):
@@ -13,7 +13,7 @@ class UserCreator(object):
     def __init__(self, user_model):
         self.user_model = user_model
         self.signup_args = Config.get('users', 'signup_args')
-        self.prime_key =  Config.get('users', 'key_arg')
+        self.prime_key = Config.get('users', 'key_arg')
 
     def verify_args(self, params):
         for key in self.signup_args:
@@ -40,7 +40,7 @@ class UserCreator(object):
             signup_args[ar] = params.get(ar)
 
         # we don't use password, we use the magic raw_password
-        del(signup_args['password'])
+        del signup_args['password']
         signup_args['password_raw'] = params.get('password')
         prime_key = params[self.prime_key].lower()
         unique_properties = [self.prime_key]
@@ -52,7 +52,7 @@ class UserCreator(object):
 
         if not user_data[0]:  # user_data is a tuple
             details = "Duplicate user id"
-            raise CustomException(error_code='',  details=details)
+            raise CustomException(error_code='', details=details)
         user = user_data[1]
         user.put()
         return user
@@ -63,7 +63,7 @@ class UserValidator(object):
     def __init__(self, auth):
         self.auth = auth
 
-    def _check_login(self, email, password):
+    def check_login(self, email, password):
         try:
             u = self.auth.get_user_by_password(email, password)
             user = User.get_by_id(u['user_id'])
@@ -82,8 +82,6 @@ class UserFormatter(object):
 
     def __init__(self):
         signup_args = Config.get('users', 'signup_args')
-        pp = PrettyPrinter()
-        pp.pprint(signup_args)
         self.signup_args = [x for x in signup_args if x != 'password']
         pp.pprint(self.signup_args)
 
@@ -95,6 +93,4 @@ class UserFormatter(object):
         response_dict['user_id'] = user.get_id()
         response_dict['user_key'] = user.key.urlsafe()
         return response_dict
-
-
 
