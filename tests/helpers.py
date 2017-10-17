@@ -43,6 +43,8 @@ class UserHelpers(object):
         for user in user_list:
             u = uc.create(user)
             tmp[u.key.urlsafe()] = u
+            self.user_list.append(u)
+        return tmp
 
     def login_user(self, username=None, password=None):
         params_for_login = {"email": username, "password": password}

@@ -8,7 +8,6 @@ from webapp2_extras import security
 
 class User(webapp2_extras.appengine.auth.models.User):
     userType = ndb.StringProperty()
-    verified_tfa = ndb.BooleanProperty(default=False)
     def set_password(self, raw_password):
         """Sets the password for the current user
 
@@ -39,14 +38,10 @@ class User(webapp2_extras.appengine.auth.models.User):
 
         return None, None
 
-class PreReg(ndb.Model):
+class Foo(ndb.Model):
     createdDate = ndb.DateTimeProperty(auto_now_add=True)
     updatedDate = ndb.DateTimeProperty()
     registeredDate = ndb.DateTimeProperty()
     firstname = ndb.StringProperty()
-    memberId = ndb.StringProperty()
-    birthDate = ndb.DateProperty()
-    email = ndb.StringProperty()
-    cell = ndb.StringProperty()
     user = ndb.KeyProperty(kind=User)
 
