@@ -1,5 +1,7 @@
 main:
     jwt_secret: '1secretthing'
+general:
+    plugin_dir: cd_plugins
 users:
     user_types:
         - dm
@@ -11,6 +13,8 @@ users:
         - password
         - userType
     key_arg: email
+    user_validators:
+        - tfa_service
     testing:
         testers:
             - email: dm1@ce.pbi
