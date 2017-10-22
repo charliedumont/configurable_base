@@ -2,6 +2,12 @@ main:
     jwt_secret: '1secretthing'
 general:
     plugin_dir: cd_plugins
+plugins:
+    tfa_service:
+        module: tfa_service
+        model: tfa_record
+        user_field: tfa_verified
+        routes: maybe not needed
 users:
     user_types:
         - dm
