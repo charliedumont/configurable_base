@@ -19,7 +19,7 @@ users:
         - password
         - userType
     key_arg: email
-    user_validators:
+    validators:
         - tfa_service
     testing:
         testers:

@@ -10,14 +10,10 @@ from pbi.decorators import set_options, set_json
 from pbi.errors import CustomException, ErrorReturn
 from pbi.handlers import BaseRequestHandler
 import pbi.token
-from pbi.util import set_cors_headers
 
 
 class SignUp(BaseRequestHandler):
     """ Api interface handler for signup """
-
-    def options(self):
-        set_cors_headers(self.response.headers)
 
     @set_json
     @set_options
@@ -38,9 +34,6 @@ class SignUp(BaseRequestHandler):
 
 class Login(BaseRequestHandler):
     """ API endpoint for handling login """
-
-    def options(self):
-        set_cors_headers(self.response.headers)
 
     @set_json
     @set_options
@@ -70,17 +63,18 @@ class Login(BaseRequestHandler):
             return
         self.response.write(ndb_json.dumps(json_dict))
 
-    def _handle_other_validators(self, user, params):
+    @staticmethod
+    def _handle_other_validators(user, params):
         user_validators = Config.get('users', 'validators')
         plugin_dir = Config.get('general', 'plugin_dir')
 
         for usv in user_validators:
             plug_path = plugin_dir + '.' + usv
             try:
-                importlib.import_module(plug_path)
+                mod = importlib.import_module(plug_path)
             except ImportError:
                 details = "Failed to load {module}".format(module=plug_path)
                 raise CustomException(details=details)
-            class_ = getattr(usv, 'validator')
+            class_ = getattr(mod, 'Validator')
             validator = class_(user=user, params=params)
             validator.validate()

@@ -1,14 +1,15 @@
+""" User data accessobjects """
 import logging
-from pprint import PrettyPrinter
 
+#pylint: disable=import-error
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
 
 from models import User
 from pbi.config import Config
 from pbi.errors import CustomException
 
-
 class UserCreator(object):
+    """ User creator control """
 
     def __init__(self, user_model):
         self.user_model = user_model
@@ -16,6 +17,8 @@ class UserCreator(object):
         self.prime_key = Config.get('users', 'key_arg')
 
     def verify_args(self, params):
+        """ Method to check incoming args against config
+        and return smart error """
         for key in self.signup_args:
             if key not in params.keys():
                 details = "we don't have %s key" % key
@@ -29,15 +32,16 @@ class UserCreator(object):
                 details = "user type: %s is not supported" % params['userType']
                 logging.info(details)
                 raise CustomException(details=details, error_code='')
-        except KeyError as e:
-            details = "User types undefined, moving on"
+        except KeyError as kex:
+            details = "User types undefined, moving on %s" % kex
             logging.info(details)
         return True
 
     def create_by_args(self, params):
+        """ Create user based on params args """
         signup_args = {}
-        for ar in self.signup_args:
-            signup_args[ar] = params.get(ar)
+        for arg in self.signup_args:
+            signup_args[arg] = params.get(arg)
 
         # we don't use password, we use the magic raw_password
         del signup_args['password']
@@ -58,39 +62,41 @@ class UserCreator(object):
         return user
 
 
-class UserValidator(object):
+class UserValidator(object): #pylint: disable=too-few-public-methods
+    """ Class for verifying our user """
 
     def __init__(self, auth):
         self.auth = auth
 
     def check_login(self, email, password):
+        """ Verify user with id and password """
         try:
-            u = self.auth.get_user_by_password(email, password)
-            user = User.get_by_id(u['user_id'])
-        except InvalidAuthIdError as e:
+            uob = self.auth.get_user_by_password(email, password)
+            user = User.get_by_id(uob['user_id'])
+        except InvalidAuthIdError:
             details = 'Login Failed bad id'
             logging.info(details)
             raise CustomException(error_code='', details=details)
-        except InvalidPasswordError as e:
+        except InvalidPasswordError:
             details = 'Login Failed bad password'
             logging.info(details)
             raise CustomException(error_code='', details=details)
         return user
 
 
-class UserFormatter(object):
+class UserFormatter(object):#pylint: disable=too-few-public-methods
+    """ User formatting tools """
 
     def __init__(self):
         signup_args = Config.get('users', 'signup_args')
         self.signup_args = [x for x in signup_args if x != 'password']
-        pp.pprint(self.signup_args)
 
     def user_to_dict(self, user):
-        u = user._to_dict()
+        """ Helper method for returning useful parts of the User object """
+        udd = user._to_dict() #pylint: disable=protected-access
         response_dict = {}
-        for ar in self.signup_args:
-            response_dict[ar] = u.get(ar)
+        for arg in self.signup_args:
+            response_dict[arg] = udd.get(arg)
         response_dict['user_id'] = user.get_id()
         response_dict['user_key'] = user.key.urlsafe()
         return response_dict
-
