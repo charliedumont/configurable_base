@@ -21,6 +21,7 @@ users:
     key_arg: email
     validators:
         - tfa_service
+    recorders: []
     testing:
         testers:
             - email: dm1@ce.pbi

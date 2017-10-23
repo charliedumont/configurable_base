@@ -55,6 +55,7 @@ class Login(BaseRequestHandler):
             usv = UserValidator(self.auth)
             user = usv.check_login(email, password)
             self._handle_other_validators(user, params)
+            self._handle_other_recorders(user, params)
             token = pbi.token.generate(user)
             json_dict["jwt"] = token
         except CustomException as cex:
@@ -62,6 +63,23 @@ class Login(BaseRequestHandler):
             cex.respond(response=self.response, status='401')
             return
         self.response.write(ndb_json.dumps(json_dict))
+
+    @staticmethod
+    def _handle_other_recorders(user, params):
+        recorders = Config.get('users', 'recorders')
+        plugin_dir = Config.get('general', 'plugin_dir')
+
+        for rec in recorders:
+            plug_path = plugin_dir + '.' + rec
+            try:
+                mod = importlib.import_module(plug_path)
+            except ImportError:
+                details = "Failed to load {module}".format(module=plug_path)
+                raise CustomException(details=details)
+            class_ = getattr(mod, 'Recorder')
+            recorder = class_(user=user, params=params)
+            recorder.record()
+
 
     @staticmethod
     def _handle_other_validators(user, params):
